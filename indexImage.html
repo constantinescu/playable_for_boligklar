@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Boligklar Playable</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background:#000;
+}
+
+/* Progress Bar */
+#progress-bar-container{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:2px;
+    background:rgba(255,255,255,.2);
+    z-index:1000
+}
+#progress-bar-fill{
+    height:100%;
+    width:25%;
+    background:#36BB4A;
+    transition:width .3s ease
+}
+
+/* Background Image + Overlay */
+#container{
+    width:100%;
+    height:100%;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+        linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
+        url('assets/emma-andreadaki-Zht4VAH2Wx8-unsplash.jpg');
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+}
+
+/* Screens */
+.screen{
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+#screen1{display:flex}
+#screen2,#screen3,#screen4{display:none}
+
+/* Content box for readability */
+.content{
+    text-align:center;
+    max-width:90%;
+    background:rgba(0,0,0,.35);
+    padding:24px;
+    border-radius:16px;
+}
+
+/* Typography */
+.headline,
+.question,
+.result-title,
+.final-headline{
+    font-size:30px;
+    font-weight:700;
+    color:#fff;
+    margin-bottom:14px;
+    line-height:1.2
+}
+
+.subtext,
+.result-subtitle,
+.result-message,
+.final-subtext{
+    font-size:17px;
+    font-weight:400;
+    color:#f0f0f0;
+    margin-bottom:26px;
+    line-height:1.4
+}
+
+/* Buttons */
+.btn,
+.cta-btn{
+    padding:14px 44px;
+    min-height:44px;
+    font-size:16px;
+    font-weight:600;
+    color:#fff;
+    background:#36BB4A;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    transition:transform .1s ease,opacity .2s ease;
+    -webkit-tap-highlight-color:transparent;
+}
+
+.btn:active,
+.cta-btn:active{
+    transform:scale(.95)
+}
+
+.cta-btn{
+    opacity:0;
+    pointer-events:none
+}
+.cta-btn.show{
+    opacity:1;
+    pointer-events:auto
+}
+
+/* Options */
+.options-container{
+    width:100%;
+    max-width:320px;
+    display:flex;
+    flex-direction:column;
+    gap:12px
+}
+
+.option-btn{
+    width:100%;
+    padding:18px 16px;
+    min-height:52px;
+    font-size:15px;
+    font-weight:500;
+    color:#000;
+    background:#fff;
+    border:2px solid #e0e0e0;
+    border-radius:12px;
+    cursor:pointer;
+    transition:background-color .15s ease,border-color .15s ease,transform .1s ease;
+    -webkit-tap-highlight-color:transparent
+}
+
+.option-btn:active{
+    background:#36BB4A;
+    color:#fff;
+    border-color:#36BB4A;
+    transform:scale(.98)
+}
+
+/* Final CTA */
+.final-cta{
+    padding:18px 56px;
+    min-height:56px;
+    font-size:18px;
+    font-weight:700;
+    color:#fff;
+    background:#36BB4A;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    transition:transform .1s ease;
+    -webkit-tap-highlight-color:transparent;
+    box-shadow:0 6px 20px rgba(54,187,74,.5);
+    animation:pulseGlow 2s ease-in-out infinite
+}
+
+.final-cta:active{
+    transform:scale(.95);
+    animation:none
+}
+
+@keyframes pulseGlow{
+    0%,100%{box-shadow:0 6px 20px rgba(54,187,74,.4);transform:scale(1)}
+    50%{box-shadow:0 8px 24px rgba(54,187,74,.6);transform:scale(1.02)}
+}
+
+/* Transitions */
+.fade-in{animation:fadeIn .25s ease-out}
+.fade-out{animation:fadeOut .25s ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+
+</style>
+</head>
+
+<body>
+
+<div id="progress-bar-container">
+    <div id="progress-bar-fill"></div>
+</div>
+
+<div id="container">
+
+<div id="screen1" class="screen">
+    <div class="content">
+        <h1 class="headline">Buying in Copenhagen?</h1>
+        <p class="subtext">What would stress you most?</p>
+        <button class="btn" onclick="startGame()">Start</button>
+    </div>
+</div>
+
+<div id="screen2" class="screen">
+    <div class="content">
+        <h2 class="question">If you found the right apartment tomorrow… what worries you most?</h2>
+        <div class="options-container">
+            <button class="option-btn" onclick="selectOption('price')">Paying too much per m²</button>
+            <button class="option-btn" onclick="selectOption('bidding')">Losing in a bidding round</button>
+            <button class="option-btn" onclick="selectOption('bank')">Not being approved by the bank</button>
+        </div>
+    </div>
+</div>
+
+<div id="screen3" class="screen">
+    <div class="content">
+        <h1 id="resultTitle" class="result-title"></h1>
+        <p id="resultSubtitle" class="result-subtitle"></p>
+        <p class="result-message">We built BoligKlar for buyers like you.</p>
+        <button id="ctaBtn" class="cta-btn" onclick="goToScreen4()">Learn More</button>
+    </div>
+</div>
+
+<div id="screen4" class="screen">
+    <div class="content">
+        <h1 class="final-headline">Get Your Copenhagen Buying Plan</h1>
+        <p class="final-subtext">Step-by-step guidance tailored to your situation.</p>
+        <button class="final-cta" onclick="handleFinalCTA()">Join Beta Access</button>
+    </div>
+</div>
+
+</div>
+
+<script>
+(function(){
+var buyerType=null,
+progressFill=document.getElementById('progress-bar-fill'),
+screen1=document.getElementById('screen1'),
+screen2=document.getElementById('screen2'),
+screen3=document.getElementById('screen3'),
+screen4=document.getElementById('screen4'),
+resultTitle=document.getElementById('resultTitle'),
+resultSubtitle=document.getElementById('resultSubtitle'),
+ctaBtn=document.getElementById('ctaBtn');
+
+function updateProgress(p){progressFill.style.width=p+'%'}
+
+window.startGame=function(){
+updateProgress(50);
+screen1.classList.add('fade-out');
+setTimeout(function(){
+screen1.style.display='none';
+screen2.style.display='flex';
+screen2.classList.add('fade-in');
+},250)
+}
+
+window.selectOption=function(t){
+buyerType=t;
+updateProgress(75);
+screen2.classList.add('fade-out');
+setTimeout(function(){
+screen2.style.display='none';
+var msg={
+price:["You're the Analytical Buyer","Copenhagen prices demand strategy."],
+bidding:["You're the Competitive Buyer","The right move wins the deal."],
+bank:["You're the Financially Focused Buyer","Preparation changes everything."]
+}[buyerType];
+
+resultTitle.textContent=msg[0];
+resultSubtitle.textContent=msg[1];
+
+ctaBtn.classList.remove('show');
+screen3.style.display='flex';
+screen3.classList.add('fade-in');
+
+setTimeout(function(){
+ctaBtn.classList.add('show')
+},2000)
+
+},250)
+}
+
+window.goToScreen4=function(){
+updateProgress(100);
+screen3.classList.add('fade-out');
+setTimeout(function(){
+screen3.style.display='none';
+screen4.style.display='flex';
+screen4.classList.add('fade-in');
+},250)
+}
+
+window.handleFinalCTA=function(){
+window.open('https://bolig-klar-cursor.vercel.app/','_blank')
+}
+
+})();
+</script>
+
+</body>
+</html>
